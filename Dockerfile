@@ -1,4 +1,4 @@
-FROM ghcr.io/actions/actions-runner:2.322.0
+FROM ghcr.io/actions/actions-runner:2.323.0
 
 RUN sudo apt update -y && \
     sudo apt install -y curl wget git-all && \
