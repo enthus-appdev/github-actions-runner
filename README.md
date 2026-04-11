@@ -5,7 +5,7 @@
 
 A self-hosted [GitHub Actions runner](https://docs.github.com/en/actions/hosting-your-own-runners) container image, built on top of the official [`ghcr.io/actions/actions-runner`](https://github.com/actions/runner/pkgs/container/actions-runner) image with a handful of everyday CLI tools preinstalled.
 
-The upstream runner image is intentionally minimal. It ships the runner binary and `git`, but little else — and in practice, most real-world CI workflows also expect `curl`, `wget`, and `rsync` to be there. This image adds them so workflows don't have to `apt install` them on every run.
+The upstream runner image is intentionally minimal and does not ship `curl`, `wget`, or `rsync` — tools most real-world CI workflows expect to just be there. This image adds them so workflows don't have to `apt install` them on every run.
 
 It is a drop-in replacement for the upstream image: anywhere `ghcr.io/actions/actions-runner` works, this image works.
 
@@ -16,8 +16,6 @@ Based on [`ghcr.io/actions/actions-runner`](https://github.com/actions/runner), 
 - `curl` — HTTP client
 - `wget` — HTTP/FTP downloader
 - `rsync` — fast file transfer and sync
-
-`git` is already preinstalled in the upstream base image and is not re-installed here.
 
 See [`Dockerfile`](Dockerfile) for the exact build definition.
 
