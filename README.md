@@ -54,7 +54,7 @@ You can verify an image with:
 
 ```sh
 cosign verify \
-  --certificate-identity-regexp 'https://github.com/enthus-appdev/github-actions-runner/.*' \
+  --certificate-identity-regexp 'https://github.com/enthus-appdev/github-actions-runner/\.github/workflows/docker-publish\.yml@.*' \
   --certificate-oidc-issuer 'https://token.actions.githubusercontent.com' \
   ghcr.io/enthus-appdev/github-actions-runner:main
 ```
