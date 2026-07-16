@@ -6,9 +6,10 @@ RUN sudo rm -rf /etc/apt/sources.list.d/temp.list && \
     sudo apt update -y && \
     sudo apt install -y curl wget rsync gnupg && \
     curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg -o /tmp/githubcli-archive-keyring.gpg && \
-    # Fingerprints taken from the keyring served by cli.github.com on 2026-07-16, cross-checked
-    # against https://github.com/cli/cli/blob/trunk/docs/install_linux.md. A mismatch means
-    # GitHub rotated its packaging keys: re-verify against those docs and update the list.
+    # Primary-key fingerprints, trust-on-first-use from the keyring served by cli.github.com
+    # on 2026-07-16 (GitHub publishes only the keyring URL, not fingerprints). Detects future
+    # rotation/substitution, not a compromise of that initial download. On mismatch: re-fetch
+    # per https://github.com/cli/cli/blob/trunk/docs/install_linux.md and update the list.
     gnupgtmp="$(mktemp -d)" && \
     actual="$(GNUPGHOME=$gnupgtmp gpg --show-keys --with-colons /tmp/githubcli-archive-keyring.gpg | awk -F: '$1=="pub"{p=1;next} p&&$1=="fpr"{print $10;p=0}' | LC_ALL=C sort | paste -sd' ')" && \
     rm -rf "$gnupgtmp" && \
