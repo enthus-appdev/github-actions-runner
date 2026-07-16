@@ -6,7 +6,11 @@ RUN sudo rm -rf /etc/apt/sources.list.d/temp.list && \
     sudo apt update -y && \
     sudo apt install -y curl wget rsync gnupg && \
     curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg -o /tmp/githubcli-archive-keyring.gpg && \
-    [ "$(gpg --show-keys --with-colons /tmp/githubcli-archive-keyring.gpg | awk -F: '/^pub/{getline; print $10}' | sort | tr '\n' ' ')" = "2C6106201985B60E6C7AC87323F3D4EA75716059 7F38BBB59D064DBCB3D84D725612B36462313325 " ] && \
+    # A mismatch below means GitHub rotated its packaging keys: re-verify against the official
+    # install docs (https://github.com/cli/cli/blob/trunk/docs/install_linux.md) and update the list.
+    actual="$(GNUPGHOME=$(mktemp -d) gpg --show-keys --with-colons /tmp/githubcli-archive-keyring.gpg | awk -F: '$1=="pub"{p=1;next} p&&$1=="fpr"{print $10;p=0}' | sort | tr '\n' ' ')" && \
+    expected="2C6106201985B60E6C7AC87323F3D4EA75716059 7F38BBB59D064DBCB3D84D725612B36462313325 " && \
+    { [ "$actual" = "$expected" ] || { echo "gh keyring fingerprint mismatch: got [$actual] want [$expected]" >&2; exit 1; }; } && \
     sudo install -m 0644 /tmp/githubcli-archive-keyring.gpg /usr/share/keyrings/githubcli-archive-keyring.gpg && \
     rm /tmp/githubcli-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
