@@ -7,6 +7,7 @@ RUN sudo rm -rf /etc/apt/sources.list.d/temp.list && \
     sudo apt install -y curl wget rsync gnupg && \
     curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg -o /tmp/githubcli-archive-keyring.gpg && \
     gpg --show-keys --with-colons /tmp/githubcli-archive-keyring.gpg | grep -q '^fpr:::::::::2C6106201985B60E6C7AC87323F3D4EA75716059:' && \
+    [ "$(gpg --show-keys --with-colons /tmp/githubcli-archive-keyring.gpg | grep -c '^pub:')" = 1 ] && \
     sudo install -m 0644 /tmp/githubcli-archive-keyring.gpg /usr/share/keyrings/githubcli-archive-keyring.gpg && \
     rm /tmp/githubcli-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
