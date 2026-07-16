@@ -12,6 +12,7 @@ RUN sudo rm -rf /etc/apt/sources.list.d/temp.list && \
     gnupgtmp="$(mktemp -d)" && \
     actual="$(GNUPGHOME=$gnupgtmp gpg --show-keys --with-colons /tmp/githubcli-archive-keyring.gpg | awk -F: '$1=="pub"{p=1;next} p&&$1=="fpr"{print $10;p=0}' | LC_ALL=C sort | paste -sd' ')" && \
     rm -rf "$gnupgtmp" && \
+    { [ -n "$actual" ] || { echo "gh keyring: no fingerprints extracted (download or gpg parse failed)" >&2; exit 1; }; } && \
     expected="2C6106201985B60E6C7AC87323F3D4EA75716059 7F38BBB59D064DBCB3D84D725612B36462313325" && \
     { [ "$actual" = "$expected" ] || { echo "gh keyring fingerprint mismatch: got [$actual] want [$expected]" >&2; exit 1; }; } && \
     sudo install -m 0644 /tmp/githubcli-archive-keyring.gpg /usr/share/keyrings/githubcli-archive-keyring.gpg && \
