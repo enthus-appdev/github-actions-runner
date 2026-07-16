@@ -6,10 +6,13 @@ RUN sudo rm -rf /etc/apt/sources.list.d/temp.list && \
     sudo apt update -y && \
     sudo apt install -y curl wget rsync gnupg && \
     curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg -o /tmp/githubcli-archive-keyring.gpg && \
-    # A mismatch below means GitHub rotated its packaging keys: re-verify against the official
-    # install docs (https://github.com/cli/cli/blob/trunk/docs/install_linux.md) and update the list.
-    actual="$(GNUPGHOME=$(mktemp -d) gpg --show-keys --with-colons /tmp/githubcli-archive-keyring.gpg | awk -F: '$1=="pub"{p=1;next} p&&$1=="fpr"{print $10;p=0}' | sort | tr '\n' ' ')" && \
-    expected="2C6106201985B60E6C7AC87323F3D4EA75716059 7F38BBB59D064DBCB3D84D725612B36462313325 " && \
+    # Fingerprints taken from the keyring served by cli.github.com on 2026-07-16, cross-checked
+    # against https://github.com/cli/cli/blob/trunk/docs/install_linux.md. A mismatch means
+    # GitHub rotated its packaging keys: re-verify against those docs and update the list.
+    gnupgtmp="$(mktemp -d)" && \
+    actual="$(GNUPGHOME=$gnupgtmp gpg --show-keys --with-colons /tmp/githubcli-archive-keyring.gpg | awk -F: '$1=="pub"{p=1;next} p&&$1=="fpr"{print $10;p=0}' | LC_ALL=C sort | paste -sd' ')" && \
+    rm -rf "$gnupgtmp" && \
+    expected="2C6106201985B60E6C7AC87323F3D4EA75716059 7F38BBB59D064DBCB3D84D725612B36462313325" && \
     { [ "$actual" = "$expected" ] || { echo "gh keyring fingerprint mismatch: got [$actual] want [$expected]" >&2; exit 1; }; } && \
     sudo install -m 0644 /tmp/githubcli-archive-keyring.gpg /usr/share/keyrings/githubcli-archive-keyring.gpg && \
     rm /tmp/githubcli-archive-keyring.gpg && \
@@ -17,4 +20,5 @@ RUN sudo rm -rf /etc/apt/sources.list.d/temp.list && \
     sudo apt update -y && \
     sudo apt install -y gh && \
     gh --version && \
+    sudo apt clean && \
     sudo rm -rf /var/lib/apt/lists/*
