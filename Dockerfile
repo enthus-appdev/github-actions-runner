@@ -4,7 +4,7 @@ FROM ghcr.io/actions/actions-runner:2.336.0
 # The fingerprint allowlist pins the apt trust anchor to exactly GitHub's published signing keys.
 RUN sudo rm -rf /etc/apt/sources.list.d/temp.list && \
     sudo apt update -y && \
-    sudo apt install -y curl wget rsync gnupg libatomic1 && \
+    sudo apt install -y curl wget rsync gnupg libatomic1 gcc make && \
     curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg -o /tmp/githubcli-archive-keyring.gpg && \
     # Primary-key fingerprints, trust-on-first-use from the keyring served by cli.github.com
     # on 2026-07-16 (GitHub publishes only the keyring URL, not fingerprints). Detects future
