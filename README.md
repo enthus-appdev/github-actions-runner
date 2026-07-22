@@ -17,6 +17,8 @@ Based on [`ghcr.io/actions/actions-runner`](https://github.com/actions/runner), 
 - `wget` — HTTP/FTP downloader
 - `rsync` — fast file transfer and sync
 - `gh` — GitHub CLI (expected by actions such as `fgrosse/go-coverage-report`; preinstalled on GitHub-hosted runners)
+- `gcc` — C compiler, required by `go test -race` (the race detector links the cgo-based ThreadSanitizer runtime); preinstalled on GitHub-hosted runners
+- `make` — build tool expected by many `make`-driven CI jobs; preinstalled on GitHub-hosted runners
 
 See [`Dockerfile`](Dockerfile) for the exact build definition.
 
