@@ -1,4 +1,4 @@
-FROM ghcr.io/actions/actions-runner:2.336.0
+FROM ghcr.io/actions/actions-runner:2.337.0
 
 # gh intentionally unpinned: like GitHub-hosted runners, the image tracks the latest CLI on each rebuild.
 # The fingerprint allowlist pins the apt trust anchor to exactly GitHub's published signing keys.
